@@ -25,6 +25,8 @@ So please share this video with your friends and leave the like.
 
 ## Videos on youtube
 
+vtuciNQFpyA
+* [Project Demo](https://www.youtube.com/watch?v=vtuciNQFpyA) - Check what we are building
 * [Episode 0](https://www.youtube.com/watch?v=_kP5e9fi9yo) - Setup env, mongoDB and User model and Controller
 * [Episode 1](https://www.youtube.com/watch?v=U3B2TdYMmmU) - Add routes setup and more end points
 * [Episode 2](https://www.youtube.com/watch?v=STbqBxgKD2I) - Add events route and controller
@@ -34,6 +36,7 @@ So please share this video with your friends and leave the like.
 * [Episode 6](https://www.youtube.com/watch?v=IQnNYIuOvxw) - Add Styles for EventsPage, Login, Register and fix some small bugs
 * [Episode 7](https://www.youtube.com/watch?v=2by22YOUmG8) - Add Dashboard page and base styles
 * [Episode 8](https://www.youtube.com/watch?v=aQTNZcy6tnU) - Finish Dashboard and Add delete functionality 
+* [Episode 9](https://www.youtube.com/watch?v=prOC9Px4wtg) - Add JWT tokens and protecting the routes
 
 ## Want to know more about my motivation for this project?
 [Read my blog post](http://italktech.io/mern-coding-bootcamp/)
