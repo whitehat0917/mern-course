@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
 import moment from 'moment';
 import { Button, ButtonGroup, Alert } from 'reactstrap';
-import socketio from 'socket.io-client';
 import './dashboard.css'
 //Dashboard will show all the events 
 export default function Dashboard({ history }) {
@@ -13,26 +12,10 @@ export default function Dashboard({ history }) {
     const [rSelected, setRSelected] = useState(null);
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false)
-    const [messageHandler, setMessageHandler] = useState('');
-    const [eventsRequests, setEventsRequests] = useState([]);
 
     useEffect(() => {
         getEvents()
     }, [])
-
-
-    const socket = useMemo(
-        () =>
-            socketio('http://localhost:8000/', { query: { user: user_id } }),
-        [user_id]
-    );
-
-    useEffect(() => {
-        socket.on('registration_request', data => setEventsRequests([...eventsRequests, data]));
-    }, [eventsRequests, socket])
-
-
-
 
     const filterHandler = (query) => {
         setRSelected(query)
@@ -67,70 +50,21 @@ export default function Dashboard({ history }) {
         try {
             await api.delete(`/event/${eventId}`, { headers: { user: user } });
             setSuccess(true)
-            setMessageHandler('The event was deleted successfully!')
             setTimeout(() => {
                 setSuccess(false)
                 filterHandler(null)
-                setMessageHandler('')
             }, 2500)
 
         } catch (error) {
             setError(true)
-            setMessageHandler('Error when deleting event!')
             setTimeout(() => {
                 setError(false)
-                setMessageHandler('')
-            }, 2000)
-        }
-    }
-
-    const logoutHandler = () => {
-        localStorage.removeItem('user')
-        localStorage.removeItem('user_id')
-        history.push('/login');
-    }
-
-    const registrationRequestHandler = async (event) => {
-        try {
-            await api.post(`/registration/${event.id}`, {}, { headers: { user } })
-
-            setSuccess(true)
-            setMessageHandler(`The request for the event ${event.title} was successfully!`)
-            setTimeout(() => {
-                setSuccess(false)
-                filterHandler(null)
-                setMessageHandler('')
-            }, 2500)
-
-        } catch (error) {
-            setError(true)
-            setMessageHandler(`The request for the event ${event.title} wasn't successfully!`)
-            setTimeout(() => {
-                setError(false)
-                setMessageHandler('')
             }, 2000)
         }
     }
 
     return (
         <>
-            <ul className="notifications">
-                {eventsRequests.map(request => {
-                    console.log(request)
-                    return (
-                        <li key={request._id}>
-                            <div>
-                                <strong>{request.user.email}</strong> Is requesting to register to your Event
-                                <strong>{request.event.title}</strong>
-                            </div>
-                            <ButtonGroup>
-                                <Button color="secondary" onClick={() => { }}>Accept</Button>
-                                <Button color="danger" onClick={() => { }}>Cancel</Button>
-                            </ButtonGroup>
-                        </li>
-                    )
-                })}
-            </ul>
             <div className="filter-panel">
                 <ButtonGroup>
                     <Button color="primary" onClick={() => filterHandler(null)} active={rSelected === null}>All Sports</Button>
@@ -139,10 +73,7 @@ export default function Dashboard({ history }) {
                     <Button color="primary" onClick={() => filterHandler("cycling")} active={rSelected === 'cycling'}>Cycling</Button>
                     <Button color="primary" onClick={() => filterHandler('swimming')} active={rSelected === 'swimming'}>Swimming</Button>
                 </ButtonGroup>
-                <ButtonGroup>
-                    <Button color="secondary" onClick={() => history.push('events')}>Events</Button>
-                    <Button color="danger" onClick={logoutHandler}>Logout</Button>
-                </ButtonGroup>
+                <Button color="secondary" onClick={() => history.push('events')}>Events</Button>
             </div>
             <ul className="events-list">
                 {events.map(event => (
@@ -155,20 +86,16 @@ export default function Dashboard({ history }) {
                         <span>Event Date: {moment(event.date).format('l')}</span>
                         <span>Event Price: {parseFloat(event.price).toFixed(2)}</span>
                         <span>Event Description: {event.description}</span>
-                        <Button color="primary" onClick={() => registrationRequestHandler(event)}>Registration Request</Button>
+                        <Button color="primary">Subscribe</Button>
                     </li>
                 ))}
             </ul>
-            {
-                error ? (
-                    <Alert className="event-validation" color="danger"> {messageHandler} </Alert>
-                ) : ""
-            }
-            {
-                success ? (
-                    <Alert className="event-validation" color="success"> {messageHandler}</Alert>
-                ) : ""
-            }
+            {error ? (
+                <Alert className="event-validation" color="danger"> Error when deleting event! </Alert>
+            ) : ""}
+            {success ? (
+                <Alert className="event-validation" color="success"> The event was deleted successfully!</Alert>
+            ) : ""}
         </>
     )
 }
